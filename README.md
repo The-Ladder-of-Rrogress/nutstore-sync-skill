@@ -23,14 +23,45 @@
 
 ### 安装
 
+#### 方式一：通过自然语言安装（Agent 用户推荐）
+
+如果你正在使用 Claude、ChatGPT 或其他 AI Agent，可以直接用自然语言安装：
+
+> **"帮我安装 nutstore-sync 技能，用于坚果云 WebDAV 同步"**
+
+或
+
+> **"请帮我安装这个技能：https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill"**
+
+Agent 会自动完成：
+1. 克隆仓库到技能目录
+2. 安装 Python 包（如需要）
+3. 创建配置文件模板
+4. 验证安装是否成功
+
+#### 方式二：手动安装
+
 ```bash
 # 从 PyPI 安装
 pip install nutstore-sync
 
 # 或从源码安装
-git clone https://github.com/clawhub/nutstore-sync.git
-cd nutstore-sync
+git clone https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill.git
+cd nutstore-sync-skill
 pip install -e .
+```
+
+#### 方式三：作为 Agent Skill 安装
+
+将本技能添加到 Agent 的技能目录：
+
+```bash
+# 克隆到 Agent 技能目录
+git clone https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill.git \
+  ~/.stepfun/skills/nutstore-sync
+
+# 或使用 SkillHub/ClawHub 安装
+# skill install nutstore-sync
 ```
 
 ### 配置
@@ -106,8 +137,33 @@ for icon, name in items:
 
 ### Installation
 
+#### Option 1: Natural Language Install (Recommended for Agent Users)
+
+If you're using Claude, ChatGPT, or other AI Agents, simply ask:
+
+> **"Install the nutstore-sync skill for Nutstore WebDAV sync"**
+
+Or
+
+> **"Please install this skill: https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill"**
+
+The Agent will automatically:
+1. Clone the repository to the skills directory
+2. Install Python package (if needed)
+3. Create configuration file template
+4. Verify installation success
+
+#### Option 2: Manual Install
+
 ```bash
 pip install nutstore-sync
+```
+
+#### Option 3: Install as Agent Skill
+
+```bash
+git clone https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill.git \
+  ~/.stepfun/skills/nutstore-sync
 ```
 
 ### Configuration
@@ -153,11 +209,22 @@ client.upload('local.txt', 'remote.txt')
 
 | 平台 / Platform | 支持 / Support | 说明 / Note |
 |----------------|----------------|-------------|
-| ClawHub | ✅ | 标准 Skill 格式 |
-| GitHub | ✅ | 完整开源仓库 |
-| PyPI | ✅ | `pip install nutstore-sync` |
-| Coze | ✅ | 作为插件使用 |
-| SkillHub | ✅ | 标准 skill 格式 |
+| **ClawHub** | ✅ | 标准 Skill 格式，支持自然语言安装 |
+| **GitHub** | ✅ | 完整开源仓库 |
+| **PyPI** | ✅ | `pip install nutstore-sync` |
+| **Coze** | ✅ | 作为插件使用 |
+| **SkillHub** | ✅ | 标准 skill 格式 |
+| **StepFun** | ✅ | 支持 `agent_skill` 加载 |
+
+### Agent 自然语言安装示例
+
+```
+用户: "帮我安装 nutstore-sync 技能"
+Agent: 自动克隆仓库 → 验证配置 → 测试连接 → 完成安装
+
+用户: "用坚果云同步上传我的笔记"
+Agent: 调用 nutstore_sync.upload('notes.md', 'knowledge/notes.md')
+```
 
 ## 安全性 / Security
 
