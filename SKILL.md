@@ -11,7 +11,7 @@ description: |
   - 通过 Bandit 安全扫描
   - 自动化 CI/CD 安全检测
 version: 2.0.0
-author: clawhub
+author: 阶跃AI+The-Ladder-of-Rrogress
 license: MIT
 tags: [webdav, sync, nutstore, cloud-storage, jianguoyun, security]
 dependencies: []
