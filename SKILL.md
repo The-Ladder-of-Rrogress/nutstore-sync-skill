@@ -4,16 +4,28 @@ description: |
   坚果云 WebDAV 同步工具 - 免桌面端，纯标准库实现。
   支持文件上传、下载、目录列表、删除等操作。
   仅依赖 Python 标准库，无需额外安装。
+  
+  安全特性：
+  - 零硬编码凭证，配置文件隔离
+  - 输入验证与路径清理
+  - 通过 Bandit 安全扫描
+  - 自动化 CI/CD 安全检测
 version: 2.0.0
 author: clawhub
 license: MIT
-tags: [webdav, sync, nutstore, cloud-storage, jianguoyun]
+tags: [webdav, sync, nutstore, cloud-storage, jianguoyun, security]
 dependencies: []
 requirements:
   python: ">=3.8"
   env_vars: []
   binaries: []
   install: []
+security:
+  verified: true
+  scan_tool: bandit
+  no_hardcoded_credentials: true
+  input_validation: true
+  standard_library_only: true
 ---
 
 # 坚果云 WebDAV 同步

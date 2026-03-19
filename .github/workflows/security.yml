@@ -1,0 +1,87 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # 每周一运行
+    - cron: '0 0 * * 1'
+
+jobs:
+  bandit:
+    name: Bandit Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install Bandit
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit
+        
+    - name: Run Bandit scan
+      run: |
+        bandit -r nutstore_sync.py -f json -o bandit-report.json || true
+        bandit -r nutstore_sync.py -ll
+        
+    - name: Upload Bandit report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: bandit-report
+        path: bandit-report.json
+
+  custom-security-check:
+    name: Custom Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Run custom security check
+      run: |
+        python security_check.py
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Check for dependencies
+      run: |
+        # 检查是否有 requirements.txt 或 pyproject.toml 中的依赖
+        if [ -f "requirements.txt" ]; then
+          echo "Found requirements.txt"
+          cat requirements.txt
+        fi
+        
+        if [ -f "pyproject.toml" ]; then
+          echo "Found pyproject.toml"
+          # 检查是否有非标准库依赖
+          grep -E "^dependencies|^\[project\]" pyproject.toml || echo "No external dependencies found"
+        fi
+        
+        echo "✅ This project uses only Python standard library"

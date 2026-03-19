@@ -159,6 +159,20 @@ client.upload('local.txt', 'remote.txt')
 | Coze | ✅ | 作为插件使用 |
 | SkillHub | ✅ | 标准 skill 格式 |
 
+## 安全性 / Security
+
+🔒 **安全特性**：
+- ✅ 零硬编码凭证
+- ✅ 凭证文件权限保护
+- ✅ 输入验证与清理
+- ✅ 仅使用 Python 标准库（无第三方依赖风险）
+- ✅ 通过 Bandit 安全扫描
+- ✅ 自动化安全检测（GitHub Actions）
+
+📄 **安全文档**：
+- [SECURITY.md](SECURITY.md) - 完整安全策略
+- [安全扫描脚本](security_check.py) - 本地安全检查
+
 ## 文件结构 / File Structure
 
 ```

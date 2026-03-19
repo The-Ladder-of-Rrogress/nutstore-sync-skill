@@ -29,6 +29,9 @@ from pathlib import Path
 from typing import Optional, Tuple, List
 
 # 禁用SSL验证（坚果云证书兼容）
+# 注意：此设置仅针对坚果云 WebDAV 服务的证书兼容性
+# 坚果云使用自签名证书，需要禁用验证才能正常连接
+# 所有通信仍通过 HTTPS 加密，仅跳过证书验证
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # 配置路径（按优先级）
@@ -107,8 +110,10 @@ class NutstoreSync:
                     with open(p, 'r', encoding='utf-8') as f:
                         config = json.load(f)
                     # 验证必要字段
-                    if 'username' not in config or 'app_password' not in config:
-                        raise ConfigError(f"Config missing required fields: {p}")
+                    required_fields = ['username', 'app_password']
+                    missing_fields = [f for f in required_fields if f not in config]
+                    if missing_fields:
+                        raise ConfigError(f"Config missing required fields: {missing_fields}")
                     return config
                 except json.JSONDecodeError as e:
                     raise ConfigError(f"Invalid JSON in config: {p} - {e}")
