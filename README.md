@@ -98,9 +98,15 @@ git clone https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill.git \
 ```
 
 配置文件搜索路径（按优先级）：
-1. 脚本同级目录
-2. `~/.nutstore_credentials`
-3. `~/.stepfun/skills/nutstore-sync/.nutstore_credentials`
+1. 脚本同级目录: `./.nutstore_credentials`
+2. 用户主目录: `~/.nutstore_credentials`
+3. Skill 目录: `~/.stepfun/skills/nutstore-sync/.nutstore_credentials`
+
+> 🔒 **安全提示**：
+> - 配置文件已自动添加到 `.gitignore`，不会被提交到 Git
+> - 建议使用坚果云**应用密码**，而非登录密码
+> - Linux/macOS 用户建议设置文件权限：`chmod 600 ~/.nutstore_credentials`
+> - 详细安全指南请参阅 [SECURITY.md](SECURITY.md)
 
 ### 命令行使用
 
