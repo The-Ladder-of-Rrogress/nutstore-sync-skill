@@ -4,7 +4,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code Style](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 
-极简坚果云 WebDAV 同步工具，仅依赖 Python 标准库。
+**云端知识库同步 Skill** — 仅需坚果云的简单配置，即可一句话实现本地/云端文档的上传或下载。仅依赖 Python 标准库。
+
+```bash
+# 一句话上传
+nutstore-sync upload notes.md 知识库/
+
+# 一句话下载
+nutstore-sync download 知识库/notes.md ./
+```
 
 [English](#english) | [中文](#中文)
 
@@ -152,6 +160,16 @@ for icon, name in items:
 ---
 
 ## English
+
+**Cloud Knowledge Base Sync Skill** — With simple Nutstore configuration, upload or download local/cloud documents in one line. Only Python standard library.
+
+```bash
+# One-line upload
+nutstore-sync upload notes.md knowledge/
+
+# One-line download
+nutstore-sync download knowledge/notes.md ./
+```
 
 ### Features
 
