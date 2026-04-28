@@ -28,11 +28,9 @@ import re
 from pathlib import Path
 from typing import Optional, Tuple, List
 
-# 禁用SSL验证（坚果云证书兼容）
-# 注意：此设置仅针对坚果云 WebDAV 服务的证书兼容性
+# SSL 上下文（局部使用，不影响全局设置）
 # 坚果云使用自签名证书，需要禁用验证才能正常连接
-# 所有通信仍通过 HTTPS 加密，仅跳过证书验证
-ssl._create_default_https_context = ssl._create_unverified_context
+_ssl_context = ssl._create_unverified_context()  # nosec B323 -- required for nutstore self-signed cert
 
 # 配置路径（按优先级）
 DEFAULT_CONFIG_PATHS = [
@@ -42,6 +40,10 @@ DEFAULT_CONFIG_PATHS = [
 ]
 
 DEFAULT_WEBDAV_URL = "https://dav.jianguoyun.com/dav/"
+# 默认最大文件大小 50MB (防止内存溢出)
+DEFAULT_MAX_FILE_SIZE = 50 * 1024 * 1024
+# 默认请求超时时间（秒）
+DEFAULT_TIMEOUT = 30
 
 
 class NutstoreError(Exception):
@@ -75,12 +77,13 @@ class NutstoreSync:
         True
     """
 
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[str] = None, timeout: int = DEFAULT_TIMEOUT):
         """初始化客户端
-        
+
         Args:
             config_path: 配置文件路径，默认自动搜索
-            
+            timeout: 请求超时时间（秒），默认 30 秒
+
         Raises:
             ConfigError: 配置文件不存在或格式错误
         """
@@ -89,6 +92,7 @@ class NutstoreSync:
             f"{self.config['username']}:{self.config['app_password']}".encode()
         ).decode()
         self.base_url = self.config.get('webdav_url', DEFAULT_WEBDAV_URL).rstrip('/') + '/'
+        self.timeout = max(timeout, 1)  # 至少 1 秒
 
     def _load_config(self, path: Optional[str] = None) -> dict:
         """加载配置文件
@@ -147,11 +151,14 @@ class NutstoreSync:
         url = self.base_url + path.lstrip('/')
         # Validate URL scheme to prevent file:// and other unintended schemes
         if not url.startswith(('http://', 'https://')):
-            raise APIError(f"Invalid URL scheme: only HTTP/HTTPS allowed, got {url.split('://')[0] if '://' in url else 'none'}")
+            raise APIError(f"Invalid URL scheme: only HTTP/HTTPS allowed")
+        # Prevent path traversal attacks
+        if '..' in path:
+            raise APIError("Invalid path: '..' traversal not allowed")
         req = urllib.request.Request(url, data=data, method=method, headers=h)
 
         try:
-            with urllib.request.urlopen(req, timeout=30) as r:  # nosec B310 -- URL scheme validated above
+            with urllib.request.urlopen(req, context=_ssl_context, timeout=self.timeout) as r:  # nosec B310 -- URL scheme validated, local SSL context used
                 return r.status, r.read()
         except urllib.error.HTTPError as e:
             return e.code, None
@@ -186,6 +193,10 @@ class NutstoreSync:
         """
         if not os.path.exists(local_path):
             raise FileNotFoundError(f"Local file not found: {local_path}")
+
+        file_size = os.path.getsize(local_path)
+        if file_size > DEFAULT_MAX_FILE_SIZE:
+            raise APIError(f"File too large: {file_size / 1024 / 1024:.1f}MB exceeds limit of {DEFAULT_MAX_FILE_SIZE / 1024 / 1024:.0f}MB")
 
         remote_path = remote_path or os.path.basename(local_path)
         

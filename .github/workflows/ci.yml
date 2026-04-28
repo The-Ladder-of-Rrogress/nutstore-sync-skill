@@ -61,8 +61,8 @@ jobs:
         
     - name: Run flake8
       run: |
-        flake8 nutstore_sync.py --max-line-length=100 --extend-ignore=E203,W503 || true
-        
+        flake8 nutstore_sync.py --max-line-length=100 --extend-ignore=E203,W503
+
     - name: Check black formatting
       run: |
-        black --check nutstore_sync.py || true
+        black --check nutstore_sync.py
