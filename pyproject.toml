@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nutstore-sync"
-version = "2.0.0"
-description = "鍧氭灉浜?WebDAV 鍚屾宸ュ叿 - 鍏嶆闈㈢锛岀函鏍囧噯搴撳疄鐜?
+version = "2.1.0"
+description = "Nutstore WebDAV sync tool - pure standard library implementation"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
@@ -30,10 +30,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/clawhub/nutstore-sync"
-Repository = "https://github.com/clawhub/nutstore-sync"
-Issues = "https://github.com/clawhub/nutstore-sync/issues"
-Changelog = "https://github.com/clawhub/nutstore-sync/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill"
+Repository = "https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill"
+Issues = "https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill/issues"
+Changelog = "https://github.com/The-Ladder-of-Rrogress/nutstore-sync-skill/blob/main/CHANGELOG.md"
 
 [project.scripts]
 nutstore-sync = "nutstore_sync:main"
@@ -75,4 +75,3 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-

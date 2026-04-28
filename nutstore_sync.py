@@ -31,7 +31,7 @@ from typing import Optional, Tuple, List, Callable
 
 # SSL 上下文（局部使用，不影响全局设置）
 # 坚果云使用自签名证书，需要禁用验证才能正常连接
-_ssl_context = ssl._create_unverified_context()  # nosec B323 -- required for nutstore self-signed cert
+_ssl_context = ssl._create_unverified_context()  # nosec B323
 
 # 配置路径（按优先级）
 DEFAULT_CONFIG_PATHS = [
@@ -159,16 +159,19 @@ class NutstoreSync:
             h.update(headers)
 
         url = self.base_url + path.lstrip('/')
-        # Validate URL scheme to prevent file:// and other unintended schemes
+        # Validate URL scheme
         if not url.startswith(('http://', 'https://')):
-            raise APIError(f"Invalid URL scheme: only HTTP/HTTPS allowed")
+            raise APIError("Invalid URL scheme: only HTTP/HTTPS allowed")
         # Prevent path traversal attacks
         if '..' in path:
             raise APIError("Invalid path: '..' traversal not allowed")
         req = urllib.request.Request(url, data=data, method=method, headers=h)
 
         try:
-            with urllib.request.urlopen(req, context=_ssl_context, timeout=self.timeout) as r:  # nosec B310 -- URL scheme validated, local SSL context used
+            # nosec B310 -- URL scheme validated, local SSL context used
+            with urllib.request.urlopen(
+                req, context=_ssl_context, timeout=self.timeout
+            ) as r:
                 return r.status, r.read()
         except urllib.error.HTTPError as e:
             return e.code, None
@@ -211,8 +214,12 @@ class NutstoreSync:
             raise FileNotFoundError(f"Local file not found: {local_path}")
 
         file_size = os.path.getsize(local_path)
+        limit_mb = DEFAULT_MAX_FILE_SIZE / 1024 / 1024
         if file_size > DEFAULT_MAX_FILE_SIZE:
-            raise APIError(f"File too large: {file_size / 1024 / 1024:.1f}MB exceeds limit of {DEFAULT_MAX_FILE_SIZE / 1024 / 1024:.0f}MB")
+            raise APIError(
+                f"File too large: {file_size / 1024 / 1024:.1f}MB "
+                f"(limit: {limit_mb:.0f}MB)"
+            )
 
         remote_path = remote_path or os.path.basename(local_path)
 
@@ -294,12 +301,6 @@ class NutstoreSync:
         # 使用 ElementTree 解析 WebDAV XML 响应
         # 数据来自可信的坚果云服务端，非未信任输入
         root = ET.fromstring(data)  # nosec B314 -- trusted server response
-
-        # WebDAV 命名空间
-        ns = {
-            'd': 'DAV:',
-            's': 'http://nutstore.org/',
-        }
 
         results = []
         # 查找所有 href 元素
