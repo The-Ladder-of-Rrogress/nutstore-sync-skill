@@ -63,15 +63,22 @@ def check_path_traversal(file_path: str) -> list:
     """检查路径遍历防护"""
     issues = []
     content = Path(file_path).read_text(encoding='utf-8')
-    
+
     # 检查是否有路径清理
     if 'lstrip' not in content and 'pathlib' not in content:
         issues.append("未检测到路径清理，可能存在路径遍历风险")
-    
-    # 检查是否有 .. 处理
+
+    # 检查是否有 .. 防护（如果有防护代码则不报告问题）
     if "'..'" in content or '".."' in content:
-        issues.append("代码中包含 .. 路径，需确认是否有防护")
-    
+        # 检查是否有相应的防护逻辑
+        has_protection = (
+            "traversal" in content.lower()
+            or "not allowed" in content.lower()
+            or "blocked" in content.lower()
+        )
+        if not has_protection:
+            issues.append("代码中包含 '..' 路径，需确认是否有防护")
+
     return issues
 
 

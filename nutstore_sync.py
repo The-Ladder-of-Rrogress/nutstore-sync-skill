@@ -165,8 +165,9 @@ class NutstoreSync:
         req = urllib.request.Request(url, data=data, method=method, headers=h)
 
         try:
-            # nosec B310 -- URL scheme validated, local SSL context used
-            with urllib.request.urlopen(req, context=_ssl_context, timeout=self.timeout) as r:
+            with urllib.request.urlopen(
+                req, context=_ssl_context, timeout=self.timeout
+            ) as r:  # nosec: B310 -- URL scheme validated, local SSL context used
                 return r.status, r.read()
         except urllib.error.HTTPError as e:
             return e.code, None
