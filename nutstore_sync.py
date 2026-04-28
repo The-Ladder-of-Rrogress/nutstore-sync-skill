@@ -145,10 +145,13 @@ class NutstoreSync:
             h.update(headers)
 
         url = self.base_url + path.lstrip('/')
+        # Validate URL scheme to prevent file:// and other unintended schemes
+        if not url.startswith(('http://', 'https://')):
+            raise APIError(f"Invalid URL scheme: only HTTP/HTTPS allowed, got {url.split('://')[0] if '://' in url else 'none'}")
         req = urllib.request.Request(url, data=data, method=method, headers=h)
 
         try:
-            with urllib.request.urlopen(req, timeout=30) as r:
+            with urllib.request.urlopen(req, timeout=30) as r:  # nosec B310 -- URL scheme validated above
                 return r.status, r.read()
         except urllib.error.HTTPError as e:
             return e.code, None
