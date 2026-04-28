@@ -1,10 +1,10 @@
-﻿[build-system]
+[build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
 name = "nutstore-sync"
-version = "2.1.0"
+version = "2.1.1"
 description = "Nutstore WebDAV sync tool - pure standard library implementation"
 readme = "README.md"
 license = {text = "MIT"}
